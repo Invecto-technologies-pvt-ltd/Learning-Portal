@@ -58,7 +58,7 @@ export default function Users() {
   return (
     <div className="users-page">
       <div className="content">
-        <h2>Users</h2>
+        <h1>Users</h1>
         <div className="users-container">
           <table className="users-table">
             <thead>

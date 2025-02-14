@@ -165,17 +165,17 @@ h1 {
 }
 
 .login-box {
-  background: rgba(255, 255, 255, 0.9);
+  background: linear-gradient(135deg, rgba(44, 62, 80, 1) 50%, rgba(189, 195, 199, 0.5) 100%);
   padding: 2rem;
   border-radius: 15px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px);
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
 }
 
 .login-box h1 {
-  color: #333;
+  color: #ddd;
   margin-bottom: 2rem;
 }
 

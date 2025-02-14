@@ -1,0 +1,81 @@
+.settings-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: white;
+    min-width: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px; /* Equal spacing between all elements */
+}
+
+h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.profile-settings, .change-password {
+    width: 100%;
+    padding: 25px;
+    border-radius: 8px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    text-align: left;
+    width: 80%;
+}
+
+input {
+    width: 80%;
+    max-width: 500px;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: block;
+    margin: 0 auto 15px; /* Centered and spaced */
+}
+
+button {
+    width: 40%; /* Half the width of the input field */
+    max-width: 250px;
+    padding: 12px;
+    font-size: 16px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: block;
+    margin: 0 auto; /* Center align */
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+@media (max-width: 600px) {
+    .settings-container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    input {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+    }
+}
