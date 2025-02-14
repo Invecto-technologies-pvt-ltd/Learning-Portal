@@ -7,11 +7,14 @@ export default function ProtectedLayout() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('currentUser');
-    window.dispatchEvent(new Event("storage"));
-    navigate('/login');
+    localStorage.removeItem("learningTimes"); // Remove learning time data
+    localStorage.removeItem("isAuthenticated"); 
+    localStorage.removeItem("currentUser");
+    window.dispatchEvent(new Event("storage")); // Notify components
+    navigate('/login'); 
+    window.location.reload(); // Force refresh to reset state
   };
+  
 
   return (
     <div className="app-container">

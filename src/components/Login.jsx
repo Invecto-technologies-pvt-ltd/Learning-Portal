@@ -17,6 +17,8 @@ export default function Login() {
     if (username === validUsername && password === validPassword) {
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('currentUser', username);
+      localStorage.setItem("learningTimes", JSON.stringify({})); // Reset learning data
+      localStorage.setItem("isAuthenticated", "true");
 
       // Trigger a manual storage update event
       window.dispatchEvent(new Event("storage"));
@@ -25,6 +27,7 @@ export default function Login() {
     } else {
       setError('Invalid username or password');
     }
+
   };
 
   return (
