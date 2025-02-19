@@ -1,33 +1,48 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from './Context/AuthContext'; // Import useAuth hook
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { login } = useAuth(); // Get login function from context
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
 
-    const validUsername = import.meta.env.VITE_ADMIN_USERNAME || 'admin';
-    const validPassword = import.meta.env.VITE_ADMIN_PASSWORD || 'password';
+    try {
+      const response = await fetch('/api/auth/signin', { // Ensure correct backend URL
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    if (username === validUsername && password === validPassword) {
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('currentUser', username);
-      localStorage.setItem("learningTimes", JSON.stringify({})); // Reset learning data
-      localStorage.setItem("isAuthenticated", "true");
+      const data = await response.json();
 
-      // Trigger a manual storage update event
-      window.dispatchEvent(new Event("storage"));
+      if (response.ok) {
+        // Call login from context and store user data
+        login({
+          accessToken: data.accessToken,
+          user: {
+            id: data.id,
+            username: data.username,
+            email: data.email,
+            roles: data.roles
+          }
+        });
 
-      navigate('/dashboard', { replace: true });
-    } else {
-      setError('Invalid username or password');
+        navigate('/dashboard', { replace: true });
+      } else {
+        setError(data.message || 'Invalid username or password');
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
     }
-
   };
 
   return (

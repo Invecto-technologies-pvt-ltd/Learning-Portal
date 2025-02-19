@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { useLearningTime } from "./LearningTimeContext"; // Import the context
+import { useLearningTime } from "./Context/LearningTimeContext"; // Import the context
 import "./Dashboard.css";
 
 export default function Dashboard() {
   const { learningTimes, updateLearningTime } = useLearningTime();
   const [activePortal, setActivePortal] = useState(null);
   const [portalWindow, setPortalWindow] = useState(null);
+  const [timeSpent, setTimeSpent] = useState({}); // Track time locally
 
   const oems = [
     { id: "Palo Alto", name: "Palo Alto", color: "#FF6B6B", link: "https://beacon.paloaltonetworks.com/" },
@@ -19,7 +20,13 @@ export default function Dashboard() {
     if (activePortal) {
       timer = setInterval(() => {
         updateLearningTime(activePortal);
+        setTimeSpent((prev) => ({
+          ...prev,
+          [activePortal]: (prev[activePortal] || 0) + 1, // Update UI instantly
+        }));
       }, 1000);
+    } else {
+      clearInterval(timer);
     }
 
     return () => clearInterval(timer);
@@ -62,7 +69,7 @@ export default function Dashboard() {
         {oems.map((oem) => (
           <div key={oem.id} className={`portal-card ${activePortal === oem.id ? "active" : ""}`} style={{ "--card-color": oem.color }}>
             <h2>{oem.name}</h2>
-            <p>Time Spent: {formatTime(learningTimes[oem.id] || 0)}</p>
+            <p>Time Spent: {formatTime(timeSpent[oem.id] || learningTimes[oem.id] || 0)}</p>
             <button onClick={() => openLearningPortal(oem)} className="portal-button">Start Learning</button>
           </div>
         ))}

@@ -32,7 +32,7 @@
   }
   
   .users-table th, .users-table td {
-    padding: 12px 15px;
+    padding: 12px 38px;
     text-align: left;
     border-bottom: 1px solid #ddd;
   }
@@ -53,13 +53,14 @@
   }
 
   .download-btn {
-    padding: 6px 12px;
+    padding: 6px 10px;
     background-color: #3498db;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
+    margin-left: 20px;
   }
   
   .download-btn:hover {

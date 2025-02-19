@@ -3,12 +3,52 @@ import * as XLSX from "xlsx";
 import "./Users.css";
 
 export default function Users() {
-  const users = JSON.parse(import.meta.env.VITE_USERS || "[]");
+  const [users, setUsers] = useState([]);
   const [learningData, setLearningData] = useState({});
+  const [loggedInUserId, setLoggedInUserId] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false); // Track if the user is an admin
 
   useEffect(() => {
+    // Get the logged-in user's id and role from localStorage
+    const loggedInUser = JSON.parse(localStorage.getItem("currentUser"));
+    console.log("Logged-in user from localStorage:", loggedInUser);
+    if (loggedInUser) {
+      setLoggedInUserId(loggedInUser.id);
+      setCurrentUser(loggedInUser);
+      // Check if the logged-in user has the admin role
+      setIsAdmin(loggedInUser.roles.includes("ROLE_ADMIN"));
+    }
+
     const storedData = JSON.parse(localStorage.getItem("learningTimes")) || {};
     setLearningData(storedData);
+  }, []);
+
+  // Fetch users from API with custom headers
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("/api/test/all", {
+          method: "GET",
+          headers: {
+            "ngrok-skip-browser-warning": "true", 
+            "Content-Type": "application/json", 
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch users: " + response.statusText);
+        }
+
+        const data = await response.json();
+        console.log("Fetched users data:", data);
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
   }, []);
 
   const formatTime = (seconds) => {
@@ -20,7 +60,7 @@ export default function Users() {
   };
 
   const downloadReport = (user) => {
-    const userLearning = learningData || {};
+    const userLearning = learningData[user.username] || {};
 
     if (Object.keys(userLearning).length === 0) {
       alert("No learning data available for this user.");
@@ -29,28 +69,24 @@ export default function Users() {
 
     // Prepare Excel data
     const data = [
-      [`Username: ${user.username}`, ""], // First row with username
-      ["", ""], // Blank row for spacing
-      ["OEM", "Time Spent"], // Table header
+      [`Username: ${user.username}`, ""],
+      ["", ""],
+      ["OEM", "Time Spent"],
       ...Object.entries(userLearning).map(([oem, time]) => [
         oem,
         formatTime(time),
       ]),
     ];
 
-    const ws = XLSX.utils.aoa_to_sheet(data); // Convert array of arrays to sheet
+    const ws = XLSX.utils.aoa_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Learning Report");
 
-    // Apply column widths for better visibility
+    // Apply column widths
     ws["!cols"] = [{ wch: 25 }, { wch: 20 }];
-
-    // Merge first row for username
     ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 1 } }];
-
-    // Ensure username row is not skipped
-    ws["A1"].v = `Username: ${user.username}`; // Set value explicitly
-    ws["A1"].s = { font: { bold: true, sz: 14 } }; // Apply styling (optional)
+    ws["A1"].v = `Username: ${user.username}`;
+    ws["A1"].s = { font: { bold: true, sz: 14 } };
 
     XLSX.writeFile(wb, `Learning_Report_${user.username}.xlsx`);
   };
@@ -65,23 +101,38 @@ export default function Users() {
               <tr>
                 <th>ID</th>
                 <th>Username</th>
-                <th>Role</th>
+                <th>Email</th>
                 <th>Learning Report</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.username}</td>
-                  <td>{user.role}</td>
-                  <td>
-                    <button onClick={() => downloadReport(user)} className="download-btn">
-                      Download Report
-                    </button>
-                  </td>
+              {users.length > 0 ? (
+                users.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.id}</td>
+                    <td>{user.username}</td>
+                    <td>{user.email}</td>
+                    <td>
+                      {user.id === loggedInUserId || isAdmin ? (
+                        <button
+                          onClick={() => downloadReport(user)}
+                          className="download-btn"
+                        >
+                          Download Report
+                        </button>
+                      ) : (
+                        <button className="download-btn" disabled>
+                          Not Available
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4">No users found</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

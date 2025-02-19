@@ -1,48 +1,80 @@
+/* Main content styling */
 .content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 80vh; /* Full height to center vertically */
-    text-align: center;
-    /* background: linear-gradient(135deg, rgba(44, 62, 80, 0), rgba(189, 195, 199, 0.5), rgba(236, 240, 241, 1)); */
-    background: linear-gradient(135deg, rgba(44, 62, 80, 1) 50%, rgba(189, 195, 199, 0.5) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh; /* Full height to center vertically */
+  text-align: center;
+  background: linear-gradient(135deg, rgba(44, 62, 80, 1) 50%, rgba(189, 195, 199, 0.5) 100%);
+}
 
-  }
-  
+/* Portal grid layout */
+.portal-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(200px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Portal card styling */
+.portal-card {
+  background-color: var(--card-color, #ddd);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Ensure button stays at the bottom */
+  height: 190px; /* Set a fixed height to make the cards look uniform */
+  overflow: hidden; /* Hide overflowing content */
+}
+
+/* In case of more content, allow scrolling */
+.portal-card .content-wrapper {
+  overflow-y: auto;
+  flex-grow: 1; /* Make sure content area grows to fill space */
+}
+
+/* Hover effect on card */
+.portal-card:hover {
+  transform: scale(1.05);
+}
+
+/* Portal button styling */
+.portal-button {
+  margin-top: auto; /* Push the button to the bottom */
+  padding: 10px 15px;
+  border: none;
+  background-color: #333;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  width: auto;
+}
+
+.portal-button:hover {
+  background-color: #555;
+}
+
+/* Responsive grid layout for smaller screens */
+@media screen and (max-width: 1200px) {
   .portal-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(200px, 1fr));
-    gap: 20px;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
+    grid-template-columns: repeat(3, minmax(200px, 1fr)); /* 3 columns for medium screens */
   }
-  
-  .portal-card {
-    background-color: var(--card-color, #ddd);
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    transition: transform 0.3s ease-in-out;
+}
+
+@media screen and (max-width: 900px) {
+  .portal-grid {
+    grid-template-columns: repeat(2, minmax(200px, 1fr)); /* 2 columns for smaller screens */
   }
-  
-  .portal-card:hover {
-    transform: scale(1.05);
+}
+
+@media screen and (max-width: 600px) {
+  .portal-grid {
+    grid-template-columns: 1fr; /* 1 column for very small screens */
   }
-  
-  .portal-button {
-    margin-top: 10px;
-    padding: 10px 15px;
-    border: none;
-    background-color: #333;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .portal-button:hover {
-    background-color: #555;
-  }
-  
-  
+}

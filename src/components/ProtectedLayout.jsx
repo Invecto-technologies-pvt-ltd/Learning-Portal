@@ -1,20 +1,17 @@
 import { Routes, Route, Link, Navigate, useNavigate, Outlet } from 'react-router-dom';
-import Dashboard from './Dashboard';
-import Users from './Users';
-import Settings from './Settings';
+import { useAuth } from './Context/AuthContext'; // Import useAuth hook
 
 export default function ProtectedLayout() {
+  const { isAuthenticated, logout } = useAuth(); // Get isAuthenticated and logout function from context
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("learningTimes"); // Remove learning time data
-    localStorage.removeItem("isAuthenticated"); 
-    localStorage.removeItem("currentUser");
-    window.dispatchEvent(new Event("storage")); // Notify components
-    navigate('/login'); 
-    window.location.reload(); // Force refresh to reset state
+    logout(); // Call logout from context
+    navigate('/login', { replace: true }); // Navigate to login page
   };
-  
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
   return (
     <div className="app-container">
@@ -25,8 +22,7 @@ export default function ProtectedLayout() {
         <Link to="/dashboard/settings" className="nav-link">Settings</Link>
         <button 
           onClick={handleLogout}
-          className="nav-link logout"
-        >
+          className="nav-link logout">
           Logout
         </button>
       </nav>

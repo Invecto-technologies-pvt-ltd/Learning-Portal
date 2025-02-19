@@ -12,10 +12,27 @@ export function LearningTimeProvider({ children }) {
   }, [learningTimes]);
 
   const updateLearningTime = (oemId) => {
-    setLearningTimes((prev) => ({
-      ...prev,
-      [oemId]: (prev[oemId] || 0) + 1,
-    }));
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser || !currentUser.username) {
+      console.error("No logged-in user found!");
+      return;
+    }
+
+    const username = currentUser.username;
+
+    setLearningTimes((prev) => {
+      const updatedData = {
+        ...prev,
+        [username]: {
+          ...prev[username],
+          [oemId]: (prev[username]?.[oemId] || 0) + 1,
+        },
+      };
+
+      // Store in localStorage & trigger state update
+      localStorage.setItem("learningTimes", JSON.stringify(updatedData));
+      return { ...updatedData };
+    });
   };
 
   return (

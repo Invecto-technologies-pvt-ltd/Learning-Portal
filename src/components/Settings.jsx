@@ -74,8 +74,8 @@ export default function Settings() {
         <label>Name:</label>
         <input
           type="text"
-          value={user.name}
-          onChange={(e) => setUser({ ...user, name: e.target.value })}
+          value={user.username}
+          onChange={(e) => setUser({ ...user, username: e.target.value })}
         />
         <label>Email:</label>
         <input
@@ -83,7 +83,7 @@ export default function Settings() {
           value={user.email}
           onChange={(e) => setUser({ ...user, email: e.target.value })}
         />
-        <button onClick={handleUpdateProfile}>Update Profile</button>
+        {/* <button onClick={handleUpdateProfile}>Update Profile</button> */}
 
         {/* Change Password Section */}
         <h3>Change Password</h3>
