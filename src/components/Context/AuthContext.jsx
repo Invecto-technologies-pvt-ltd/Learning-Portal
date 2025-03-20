@@ -24,10 +24,50 @@ export function AuthProvider({ children }) {
     setIsAuthenticated(true);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    // Get learning data before clearing anything
+    const learningData = JSON.parse(localStorage.getItem("learningData")) || [];
+    
+    if (learningData.length > 0) {
+      try {
+        // Send all learning data entries
+        const promises = learningData.map(data => 
+          fetch("http://192.168.1.215:8000/api/v1/activity/log", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({
+              startTime: data.startTime,
+              duration: data.duration,
+              oemId: parseInt(data.oemId)
+            })
+          })
+        );
+
+        // Wait for all requests to complete
+        const responses = await Promise.all(promises);
+        
+        // Check if any request failed
+        const hasError = responses.some(response => !response.ok);
+        if (hasError) {
+          throw new Error("Failed to send some learning data");
+        }
+
+        // Clear learning data after successful sync
+        localStorage.setItem("learningData", JSON.stringify([]));
+      } catch (error) {
+        console.error("Error syncing learning data during logout:", error);
+      }
+    }
+
+    // Only clear storage after sync attempt is complete
     localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('learningTimes');
     localStorage.removeItem('currentUser');
-    localStorage.removeItem('learningTimes')
+    localStorage.removeItem('activeSessions');
     setIsAuthenticated(false);
   };
 

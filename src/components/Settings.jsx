@@ -1,23 +1,29 @@
 import { useState, useEffect } from "react";
 import './Settings.css';
+
 export default function Settings() {
   const [user, setUser] = useState({
-    name: "",
+    fullname: "",
     email: "",
-    password: "",
     role: "user",
+  });
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
   });
   const [isAdmin, setIsAdmin] = useState(false);
   const [users, setUsers] = useState([]); // For Admin: Manage Users
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let storedUser = localStorage.getItem("currentUser");
   
     try {
-      storedUser = storedUser ? JSON.parse(storedUser) : { name: "", email: "", role: "user" };
+      storedUser = storedUser ? JSON.parse(storedUser) : { fullname: "", email: "", role: "user" };
     } catch (error) {
       console.error("Error parsing user data:", error);
-      storedUser = { name: "", email: "", role: "user" }; // Default fallback
+      storedUser = { fullname: "", email: "", role: "user" }; // Default fallback
     }
   
     setUser(storedUser);
@@ -37,13 +43,56 @@ export default function Settings() {
   };
 
   // Change Password
-  const handleChangePassword = () => {
-    if (user.password.length < 6) {
-      alert("Password must be at least 6 characters long.");
-      return;
+  const handleChangePassword = async () => {
+    try {
+      // Reset error
+      setError("");
+
+      // Validate passwords
+      if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+        setError("All password fields are required");
+        return;
+      }
+
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        setError("New passwords do not match");
+        return;
+      }
+
+      if (passwordData.newPassword.length < 6) {
+        setError("New password must be at least 6 characters long");
+        return;
+      }
+
+      const response = await fetch("http://192.168.1.215:8000/api/v1/users/change-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+          oldPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to change password");
+      }
+
+      // Clear password fields
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      });
+
+      alert("Password updated successfully!");
+    } catch (error) {
+      setError(error.message || "Failed to update password");
     }
-    localStorage.setItem("currentUser", JSON.stringify(user));
-    alert("Password updated successfully!");
   };
 
   // Admin: Manage Roles
@@ -67,32 +116,50 @@ export default function Settings() {
 
   return (
     <div className="content">
-      <h2>Settings</h2>
       <div className="settings-container">
-        {/* Update Profile Section */}
+        {/* Profile Settings Section */}
         <h3>Profile Settings</h3>
         <label>Name:</label>
         <input
           type="text"
-          value={user.username}
-          onChange={(e) => setUser({ ...user, username: e.target.value })}
+          value={user.fullname}
         />
         <label>Email:</label>
         <input
           type="email"
           value={user.email}
-          onChange={(e) => setUser({ ...user, email: e.target.value })}
         />
-        {/* <button onClick={handleUpdateProfile}>Update Profile</button> */}
 
         {/* Change Password Section */}
         <h3>Change Password</h3>
-        <input
-          type="password"
-          placeholder="New Password"
-          onChange={(e) => setUser({ ...user, password: e.target.value })}
-        />
-        <button onClick={handleChangePassword}>Update Password</button>
+        {error && <div className="error-message">{error}</div>}
+        <div className="password-section">
+          <label>Current Password:</label>
+          <input
+            type="password"
+            value={passwordData.currentPassword}
+            onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+            placeholder="Enter current password"
+          />
+          
+          <label>New Password:</label>
+          <input
+            type="password"
+            value={passwordData.newPassword}
+            onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+            placeholder="Enter new password"
+          />
+          
+          <label>Confirm New Password:</label>
+          <input
+            type="password"
+            value={passwordData.confirmPassword}
+            onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+            placeholder="Confirm new password"
+          />
+          
+          <button onClick={handleChangePassword}>Update Password</button>
+        </div>
 
         {/* Admin Panel */}
         {isAdmin && (

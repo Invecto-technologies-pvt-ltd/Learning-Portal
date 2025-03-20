@@ -4,70 +4,106 @@
 }
 
 .users-container {
-    width: 100%;
-    margin: 0; /* Remove margin */
-    padding: 20px; /* Add slight padding */
-    position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 20px;
+  position: relative;
+  overflow-x: auto; /* Add horizontal scroll for small screens */
+}
+
+/* Reset global content class for Users page */
+.users-page .content {
+  position: static !important;
+  display: block !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  height: auto !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  max-width: 100%; /* Ensure content doesn't overflow */
+}
+
+/* Table Styling */
+.users-table {
+  width: 100%;
+  min-width: 800px; /* Minimum width to prevent squishing */
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px; /* Add space at bottom */
+}
+
+.users-table th, .users-table td {
+  padding: 12px 20px; /* Reduced padding for better responsiveness */
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+.users-table th {
+  background-color: #2c3e50;
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+  position: sticky; /* Keep headers visible during scroll */
+  top: 0;
+}
+
+.users-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.users-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.download-btn {
+  padding: 4px 15px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 0.1px; /* Reduced margin */
+  white-space: nowrap;
+  width: auto;
+}
+
+.download-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Media queries for responsive design */
+@media screen and (max-width: 1024px) {
+  .users-container {
+    padding: 10px; /* Reduced padding on smaller screens */
   }
-  
-  /* Reset global content class for Users page */
-  .users-page .content {
-    position: static !important;
-    display: block !important;
-    align-items: flex-start !important;
-    justify-content: flex-start !important;
-    height: auto !important;
-    padding-top: 0 !important;
-    margin-top: 0 !important;
-  }
-  
-  /* Table Styling */
-  .users-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
+
   .users-table th, .users-table td {
-    padding: 12px 38px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+    padding: 10px 15px; /* Further reduced padding */
   }
-  
-  .users-table th {
-    background-color: #2c3e50;
-    color: white;
-    text-transform: uppercase;
-    font-weight: bold;
-  }
-  
-  .users-table tbody tr:hover {
-    background-color: #f5f5f5;
-  }
-  
-  .users-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
+}
 
-  .download-btn {
-    padding: 6px 10px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-left: 20px;
-  }
-  
-  .download-btn:hover {
-    background-color: #2980b9;
-  }
-  
+/* Add smooth scrolling for better user experience */
+.users-container::-webkit-scrollbar {
+  height: 8px;
+}
 
+.users-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.users-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.users-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
   
   
   
