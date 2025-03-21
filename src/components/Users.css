@@ -11,6 +11,11 @@
   overflow-x: auto; /* Add horizontal scroll for small screens */
 }
 
+.content h1 {
+  color: white;
+  padding-top: 20px;
+}
+
 /* Reset global content class for Users page */
 .users-page .content {
   position: static !important;

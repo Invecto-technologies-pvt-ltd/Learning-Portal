@@ -21,14 +21,14 @@ export default function Login() {
       });
 
       const data = await response.json();
-      console.log("Full Login Response:", data); // Log the entire response
-      console.log("Response Status:", response.status);
-      console.log("Response Headers:", Object.fromEntries(response.headers.entries()));
+      // console.log("Full Login Response:", data); // Log the entire response
+      // console.log("Response Status:", response.status);
+      // console.log("Response Headers:", Object.fromEntries(response.headers.entries()));
 
       if (response.ok) {
         // Check if token exists in different possible locations
         const token = data.data?.accessToken;
-        console.log("Found token:", token);
+        // console.log("Found token:", token);
 
         if (!token) {
           throw new Error("Token is missing in the response");
@@ -39,7 +39,7 @@ export default function Login() {
         localStorage.setItem("currentUser", JSON.stringify(data.data?.user)); // Store user details
 
         // Verify if token is stored correctly
-        console.log("Stored Token:", localStorage.getItem("token"));
+        // console.log("Stored Token:", localStorage.getItem("token"));
 
         // Call login function from context
         login({
@@ -60,7 +60,7 @@ export default function Login() {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h1>Portal Login</h1>
+        <h1>Portal</h1>
         <form onSubmit={handleLogin}>
           {error && <div className="error-message">{error}</div>}
           <input

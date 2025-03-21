@@ -42,7 +42,7 @@ export default function Dashboard() {
           link: oem.url // Using url from API response
         }));
         
-        console.log("Fetched OEMs:", formattedOems);
+        // console.log("Fetched OEMs:", formattedOems);
         setOems(formattedOems);
       } catch (error) {
         console.error("Error fetching OEMs:", error);
@@ -133,84 +133,67 @@ export default function Dashboard() {
       return;
     }
 
-    // If there's already an active session, stop it and store data
-    if (activeOem && portalWindow) {
-      const currentElapsedTime = elapsedTimes[activeOem] || 0;
-      
-      const sessionData = {
-        oem: activeOem,
-        startTime: new Date(activeSessions[currentUser.id][activeOem]).toISOString(),
-        endTime: new Date().toISOString(),
-        duration: currentElapsedTime
-      };
-
-      const existingData = JSON.parse(localStorage.getItem("learningData")) || [];
-      existingData.push(sessionData);
-      localStorage.setItem("learningData", JSON.stringify(existingData));
-
-      stopLearningSession(currentUser.id, activeOem);
-      setPortalWindow(null);
-      setActiveOem(null);
+    // Check if any OEM tab is already open
+    if (activeOem) {
+      alert("Please close the current OEM tab before opening a new one.");
+      return;
     }
 
-    // Only try to open a new window if we're not handling a closure
-    if (!portalWindow?.closed) {
-      const newWindow = window.open(oem.link, "_blank");
+    // Only try to open a new window if no active session exists
+    const newWindow = window.open(oem.link, "_blank");
 
-      if (newWindow) {
-        const startTime = Date.now();
-        setPortalWindow(newWindow);
-        setActiveOem(oem.id);
-        startLearningSession(currentUser.id, oem.id);
+    if (newWindow) {
+      const startTime = Date.now();
+      setPortalWindow(newWindow);
+      setActiveOem(oem.id);
+      startLearningSession(currentUser.id, oem.id);
 
-        const checkClosed = setInterval(() => {
-          if (newWindow.closed) {
-            clearInterval(checkClosed);
-            
-            // Stop the session first to ensure context is updated
-            stopLearningSession(currentUser.id, oem.id);
-            
-            const endTime = Date.now();
-            const durationInSeconds = Math.floor((endTime - startTime) / 1000);
-            const baseTime = learningTimes[currentUser.id]?.[oem.id] || 0;
-            const finalTime = baseTime + durationInSeconds;
+      const checkClosed = setInterval(() => {
+        if (newWindow.closed) {
+          clearInterval(checkClosed);
+          
+          // Stop the session first to ensure context is updated
+          stopLearningSession(currentUser.id, oem.id);
+          
+          const endTime = Date.now();
+          const durationInSeconds = Math.floor((endTime - startTime) / 1000);
+          const baseTime = learningTimes[currentUser.id]?.[oem.id] || 0;
+          const finalTime = baseTime + durationInSeconds;
 
-            // Update final elapsed time immediately
-            setElapsedTimes(prev => ({
-              ...prev,
+          // Update final elapsed time immediately
+          setElapsedTimes(prev => ({
+            ...prev,
+            [oem.id]: finalTime
+          }));
+
+          // Store session data
+          const sessionData = {
+            oemId: oem.id,
+            startTime: new Date(startTime).toISOString(),
+            duration: durationInSeconds
+          };
+
+          const existingData = JSON.parse(localStorage.getItem("learningData")) || [];
+          existingData.push(sessionData);
+          localStorage.setItem("learningData", JSON.stringify(existingData));
+
+          // Update learning times in localStorage
+          const updatedTimes = {
+            ...JSON.parse(localStorage.getItem("learningTimes")) || {},
+            [currentUser.id]: {
+              ...(learningTimes[currentUser.id] || {}),
               [oem.id]: finalTime
-            }));
+            }
+          };
+          localStorage.setItem("learningTimes", JSON.stringify(updatedTimes));
 
-            // Store session data
-            const sessionData = {
-              oemId: oem.id,
-              startTime: new Date(startTime).toISOString(),
-              // endTime: new Date(endTime).toISOString(),
-              duration: durationInSeconds
-            };
-
-            const existingData = JSON.parse(localStorage.getItem("learningData")) || [];
-            existingData.push(sessionData);
-            localStorage.setItem("learningData", JSON.stringify(existingData));
-
-            // Update learning times in localStorage
-            const updatedTimes = {
-              ...JSON.parse(localStorage.getItem("learningTimes")) || {},
-              [currentUser.id]: {
-                ...(learningTimes[currentUser.id] || {}),
-                [oem.id]: finalTime
-              }
-            };
-            localStorage.setItem("learningTimes", JSON.stringify(updatedTimes));
-
-            // Clear window state last
-            setPortalWindow(null);
-            setActiveOem(null);
-          }
-        }, 100);
-      } else {
-        alert("Popup blocked! Please allow popups for this site.");
-      }
+          // Clear window state last
+          setPortalWindow(null);
+          setActiveOem(null);
+        }
+      }, 100);
+    } else {
+      alert("Popup blocked! Please allow popups for this site.");
     }
   };
 

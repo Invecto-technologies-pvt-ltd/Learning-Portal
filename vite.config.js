@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '0.0.0.0',
+    port: 8080,
     proxy: {
       '/api': {
         target: 'http://192.168.1.215:8000', // Replace this with your API server URL

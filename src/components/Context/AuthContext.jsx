@@ -65,6 +65,7 @@ export function AuthProvider({ children }) {
     // Only clear storage after sync attempt is complete
     localStorage.removeItem('token');
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('learningData');
     localStorage.removeItem('learningTimes');
     localStorage.removeItem('currentUser');
     localStorage.removeItem('activeSessions');

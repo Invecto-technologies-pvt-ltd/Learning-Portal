@@ -1,6 +1,7 @@
 import { Routes, Route, Link, Navigate, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from './Context/AuthContext'; // Import useAuth hook
 import { useState } from 'react';
+import logo from '../assets/logo.jpg'; // Add this import
 
 export default function ProtectedLayout() {
   const { isAuthenticated, logout } = useAuth(); // Get isAuthenticated and logout function from context
@@ -26,7 +27,9 @@ export default function ProtectedLayout() {
   return (
     <div className="app-container">
       <nav className="sidebar">
-        <div className="nav-header">Learning Portal</div>
+        <div className="nav-header">
+          <img src={logo} className="nav-logo" alt="Logo" />
+        </div>
         <Link to="/dashboard" className="nav-link">Home</Link>
         <Link to="/dashboard/users" className="nav-link">Users</Link>
         <Link to="/dashboard/settings" className="nav-link">Settings</Link>

@@ -14,7 +14,7 @@ export default function Users() {
   // First useEffect for user data and learning times
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("currentUser"));
-    console.log("Logged-in user from localStorage:", loggedInUser);
+    // console.log("Logged-in user from localStorage:", loggedInUser);
     if (loggedInUser) {
       setCurrentUser(loggedInUser);
       setIsAdmin(loggedInUser.role?.toUpperCase() === "ADMIN");
@@ -69,12 +69,12 @@ export default function Users() {
 
   // Add debug log for isAdmin state
   useEffect(() => {
-    console.log("isAdmin state changed:", isAdmin);
+    // console.log("isAdmin state changed:", isAdmin);
   }, [isAdmin]);
 
   // Add debug log for users state
   useEffect(() => {
-    console.log("users state changed:", users);
+    // console.log("users state changed:", users);
   }, [users]);
 
   const formatTime = (seconds) => {
@@ -98,7 +98,7 @@ export default function Users() {
       }
 
       const responseData = await response.json();
-      console.log("Raw response data:", responseData);
+      // console.log("Raw response data:", responseData);
 
       const { data: userData } = responseData;
       
@@ -135,7 +135,7 @@ export default function Users() {
         ])
       ];
 
-      console.log("Final Excel data:", excelData);
+      // console.log("Final Excel data:", excelData);
 
       const ws = XLSX.utils.aoa_to_sheet(excelData);
       const wb = XLSX.utils.book_new();
@@ -156,7 +156,7 @@ export default function Users() {
       ws["A3"].s = { font: { bold: true, sz: 12 } };
 
       XLSX.writeFile(wb, `Learning_Report_${userData.fullname.replace(/\s+/g, '_')}.xlsx`);
-      console.log("Report generated successfully");
+      // console.log("Report generated successfully");
     } catch (error) {
       console.error("Error generating report:", error);
       console.error("Error details:", {

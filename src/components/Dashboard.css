@@ -6,11 +6,16 @@
   justify-content: flex-start;
   min-height: 80vh; /* Full height to center vertically */
   text-align: center;
-  background: linear-gradient(135deg, rgba(44, 62, 80, 1) 50%, rgba(189, 195, 199, 0.5) 100%);
+  background: linear-gradient(135deg, rgba(54, 77, 137, 1) 50%, rgba(54, 77, 137, 0.5) 100%);
 }
 
 .content h2 {
   margin-top: 40px;
+  color: beige;
+}
+
+.content h1 {
+  color: grey;
 }
 
 /* .sync-button {
@@ -31,13 +36,13 @@
   gap: 20px;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
 /* Portal card styling */
 .portal-card {
-  background-color: rgba(144, 192, 224, 0.3);
-  color: white;
+  background-color: rgba(12, 66, 149, 0.8);
+  color: #070738;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -47,6 +52,10 @@
   justify-content: space-between; /* Ensure button stays at the bottom */
   height: 220px; /* Set a fixed height to make the cards look uniform */
   overflow: hidden; /* Hide overflowing content */
+}
+
+.portal-card h2 {
+  color: black;
 }
 
 /* In case of more content, allow scrolling */
