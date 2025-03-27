@@ -47,3 +47,28 @@ export default function ProtectedLayout() {
     </div>
   );
 }
+
+
+// import { Navigate, Outlet } from 'react-router-dom';
+// import { useAuth } from './Context/AuthContext';
+// import { useEffect } from 'react';
+
+// export default function ProtectedLayout() {
+//   const { isAuthenticated, loading, checkAuth } = useAuth();
+
+//   useEffect(() => {
+//     if (!isAuthenticated) {
+//       checkAuth();
+//     }
+//   }, [isAuthenticated, checkAuth]);
+
+//   if (loading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   if (!isAuthenticated) {
+//     return <Navigate to="/login" replace />;
+//   }
+
+//   return <Outlet />;
+// }

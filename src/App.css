@@ -141,13 +141,17 @@ h1 {
 .login-box h1::before {
   content: '';
   display: inline-block;
-  margin-top: 7px;
+  margin-top: 5px;
   width: 140px;
   height: 40px;
   background-image: url('./assets/logo.jpg');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+.nav-logo {
+  width: 185px;
 }
 
 .login-box form {
@@ -161,7 +165,7 @@ h1 {
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 1rem;
-  background-color: rgba(255, 255, 255, 0.8);  
+  background-color: white;  
 }
 
 .login-box button {
@@ -226,7 +230,7 @@ h1 {
 
 .nav-link.logout {
   background-color: #2c3e50;
-  color: black;
+  color: white;
   width: auto;
   border: none;
   cursor: pointer;
@@ -240,5 +244,42 @@ h1 {
   background-color: #ccc;
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+.login-box select {
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  margin-left: 2.3rem;
+  margin-right: 2.3rem;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  border-radius: 5px;
+  background-color: white;
+  background-size: 12px;
+  cursor: pointer;
+}
+
+.login-box select:focus {
+  outline: none;
+  border-color: #1a2a6c;
+}
+
+.login-box select:hover {
+  border-color: #1a2a6c;
+}
+
+.login-box select option {
+  background-color: white;
+  color: #333;
+  padding: 0.8rem;
+}
+
+/* Style for the placeholder option */
+.login-box select option[value=""] {
+  color: #666;
+}
+
+.saml-login-button {
+  margin-left: 9rem;
 }
 

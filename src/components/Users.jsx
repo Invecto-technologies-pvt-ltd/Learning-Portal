@@ -30,8 +30,8 @@ export default function Users() {
       try {
         // Use different endpoints based on user role
         const endpoint = isAdmin 
-          ? "http://192.168.1.215:8000/api/v1/users/all-users"
-          : "http://192.168.1.215:8000/api/v1/users/current-user"; // Endpoint for current user's profile
+          ? "http://localhost:8000/api/v1/users/all-users"
+          : "http://localhost:8000/api/v1/users/current-user"; // Endpoint for current user's profile
 
         const response = await fetch(endpoint, {
           headers: {
@@ -87,7 +87,7 @@ export default function Users() {
 
   const downloadReport = async (user) => {
     try {
-      const response = await fetch(`http://192.168.1.215:8000/api/v1/reports/${user.id}`, {
+      const response = await fetch(`http://localhost:8000/api/v1/reports/${user.id}`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
@@ -104,7 +104,7 @@ export default function Users() {
       
       if (!userData || !userData.report) {
         // Still create report but with zero durations
-        const oemResponse = await fetch("http://192.168.1.215:8000/api/v1/oem", {
+        const oemResponse = await fetch("http://localhost:8000/api/v1/oem", {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }
@@ -169,7 +169,7 @@ export default function Users() {
 
   const handleRoleChange = async (userId, newRole) => {
     try {
-      const response = await fetch(`http://192.168.1.215:8000/api/v1/users/change-role/`, {
+      const response = await fetch(`http://localhost:8000/api/v1/users/change-role/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

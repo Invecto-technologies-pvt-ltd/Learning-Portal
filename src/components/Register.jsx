@@ -19,7 +19,7 @@ export default function Register() {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await fetch("http://192.168.1.215:8000/api/v1/departments", {
+        const response = await fetch("http://localhost:8000/api/v1/departments", {
           headers: {
             "Content-Type": "application/json"
           }
@@ -59,7 +59,7 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch("http://192.168.1.215:8000/api/v1/users/register", {
+      const response = await fetch("http://localhost:8000/api/v1/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,7 +118,7 @@ export default function Register() {
               setFormData({ ...formData, department: e.target.value })
             }
             required
-            className="department-select"
+            className="department-select register-select"
           >
             <option value="">Select Department</option>
             {departments.map((dept) => (

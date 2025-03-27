@@ -8,11 +8,23 @@ export default defineConfig({
     port: 8080,
     proxy: {
       '/api': {
-        target: 'http://192.168.1.215:8000', // Replace this with your API server URL
+        target: 'http://localhost:8000',
         changeOrigin: true,
-        secure: false, // Set this to true if your API server is using HTTPS
-        rewrite: (path) => path.replace(/^\/api/, ''), // Optionally remove /api from the request path
+        secure: false,
+        withCredentials: true
       },
-    },
-  },
+      '/whoami': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+        withCredentials: true
+      },
+      '/login': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+        withCredentials: true
+      }
+    }
+  }
 });

@@ -1,80 +1,98 @@
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export const AuthProvider = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
-export function AuthProvider({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
+  const checkAuth = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/whoami", {
+        method: "GET",
+        credentials: 'include',
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        }
+      });
 
-  useEffect(() => {
-    const handleAuthChange = () => {
-      setIsAuthenticated(!!localStorage.getItem("token"));
-    };
+      console.log('Auth check response:', response);
+      const data = await response.json();
+      console.log('Auth check data:', data);
 
-    window.addEventListener("storage", handleAuthChange); // Listen to changes in localStorage
-    return () => window.removeEventListener("storage", handleAuthChange);
-  }, []);
+      if (response.ok && data.user) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+        localStorage.setItem("currentUser", JSON.stringify(data.user));
+        return true;
+      } else {
+        setIsAuthenticated(false);
+        localStorage.removeItem("currentUser");
+        return false;
+      }
+    } catch (error) {
+      console.error("Auth check failed:", error);
+      setIsAuthenticated(false);
+      localStorage.removeItem("currentUser");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const login = (data) => {
-    localStorage.setItem('token', data.accessToken);
-    localStorage.setItem('currentUser', JSON.stringify(data.user));
-    setIsAuthenticated(true);
+  const login = async (userData) => {
+    try {
+      setUser(userData.user);
+      setIsAuthenticated(true);
+      localStorage.setItem("currentUser", JSON.stringify(userData.user));
+      return true;
+    } catch (error) {
+      console.error("Login failed:", error);
+      return false;
+    }
   };
 
   const logout = async () => {
-    // Get learning data before clearing anything
-    const learningData = JSON.parse(localStorage.getItem("learningData")) || [];
-    
-    if (learningData.length > 0) {
-      try {
-        // Send all learning data entries
-        const promises = learningData.map(data => 
-          fetch("http://192.168.1.215:8000/api/v1/activity/log", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`
-            },
-            body: JSON.stringify({
-              startTime: data.startTime,
-              duration: data.duration,
-              oemId: parseInt(data.oemId)
-            })
-          })
-        );
-
-        // Wait for all requests to complete
-        const responses = await Promise.all(promises);
-        
-        // Check if any request failed
-        const hasError = responses.some(response => !response.ok);
-        if (hasError) {
-          throw new Error("Failed to send some learning data");
+    try {
+      const response = await fetch('http://localhost:8000/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          "Content-Type": "application/json"
         }
+      });
 
-        // Clear learning data after successful sync
-        localStorage.setItem("learningData", JSON.stringify([]));
-      } catch (error) {
-        console.error("Error syncing learning data during logout:", error);
+      if (!response.ok) {
+        throw new Error('Logout failed');
       }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
+      localStorage.clear();
     }
-
-    // Only clear storage after sync attempt is complete
-    localStorage.removeItem('token');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('learningData');
-    localStorage.removeItem('learningTimes');
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('activeSessions');
-    setIsAuthenticated(false);
   };
 
+  // Check auth status on mount
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ 
+      isAuthenticated, 
+      loading, 
+      user, 
+      login, 
+      logout,
+      checkAuth 
+    }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
+
+export const useAuth = () => useContext(AuthContext);

@@ -23,7 +23,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchOems = async () => {
       try {
-        const response = await fetch("http://192.168.1.215:8000/api/v1/oem", {
+        const response = await fetch("http://localhost:8000/api/v1/oem", {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }
@@ -38,7 +38,6 @@ export default function Dashboard() {
         const formattedOems = data.map(oem => ({
           id: oem.id.toString(),
           name: oem.name,
-          color: "rgba(13, 71, 161, 0.5)", // Semi-transparent dark blue
           link: oem.url // Using url from API response
         }));
         
@@ -97,7 +96,7 @@ export default function Dashboard() {
     try {
       // Send all learning data entries
       const promises = learningData.map(data => 
-        fetch("http://192.168.1.215:8000/api/v1/activity/log", {
+        fetch("http://localhost:8000/api/v1/activity/log", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

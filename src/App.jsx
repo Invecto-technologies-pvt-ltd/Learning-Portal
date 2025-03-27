@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import Login from './components/Login';
 import Register from './components/Register';
+import LoginLocal from './components/Loginlocal';
 import ProtectedLayout from './components/ProtectedLayout';
 import Dashboard from './components/Dashboard';
 import Users from './components/Users';
@@ -19,7 +20,7 @@ export default function App() {
             element={<LoginPage />}
           />
           <Route path="/register" element={<Register />} />
-
+          <Route path="/loginlocal" element={<LoginLocal />} />
           {/* Protected Routes */}
           <Route
             path="/dashboard"
@@ -49,3 +50,30 @@ function ProtectedRoute() {
   const { isAuthenticated } = useAuth(); // Use AuthContext
   return isAuthenticated ? <ProtectedLayout /> : <Navigate to="/login" replace />;
 }
+
+
+// import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+// import { AuthProvider } from './components/Context/AuthContext';
+// import ProtectedLayout from './components/ProtectedLayout';
+// import Login from './components/Login';
+// import Dashboard from './components/Dashboard';
+// import './App.css';
+
+// function App() {
+//   return (
+//     <AuthProvider>
+//       <BrowserRouter>
+//         <Routes>
+//           <Route path="/login" element={<Login />} />
+//           <Route path="/" element={<ProtectedLayout />}>
+//             <Route index element={<Navigate to="/dashboard" />} />
+//             <Route path="/dashboard" element={<Dashboard />} />
+//           </Route>
+//           <Route path="*" element={<Navigate to="/login" />} />
+//         </Routes>
+//       </BrowserRouter>
+//     </AuthProvider>
+//   );
+// }
+
+// export default App;
