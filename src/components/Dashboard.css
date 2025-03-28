@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 85vh; /* Full height to center vertically */
+  min-height: 80vh; /* Full height to center vertically */
   text-align: center;
   background: linear-gradient(135deg, rgba(54, 77, 137, 0.7) 50%, rgba(54, 77, 137) 100%);
 }

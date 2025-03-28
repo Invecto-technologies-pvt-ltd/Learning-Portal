@@ -1,98 +1,73 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext } from "react";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState(null);
 
-  const checkAuth = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/whoami", {
-        method: "GET",
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
+    const login = async () => {
+        setLoading(true);
+        try {
+            window.location.href = "http://localhost:8000/login"; // Trigger SSO
+        } catch (error) {
+            console.error("Login failed:", error);
+        } finally {
+            setLoading(false);
         }
-      });
+    };
 
-      console.log('Auth check response:', response);
-      const data = await response.json();
-      console.log('Auth check data:', data);
+    const logout = async () => {
+        try {
+            await fetch("http://localhost:8000/logout", {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
 
-      if (response.ok && data.user) {
-        setUser(data.user);
-        setIsAuthenticated(true);
-        localStorage.setItem("currentUser", JSON.stringify(data.user));
-        return true;
-      } else {
-        setIsAuthenticated(false);
-        localStorage.removeItem("currentUser");
-        return false;
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error);
-      setIsAuthenticated(false);
-      localStorage.removeItem("currentUser");
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const login = async (userData) => {
-    try {
-      setUser(userData.user);
-      setIsAuthenticated(true);
-      localStorage.setItem("currentUser", JSON.stringify(userData.user));
-      return true;
-    } catch (error) {
-      console.error("Login failed:", error);
-      return false;
-    }
-  };
-
-  const logout = async () => {
-    try {
-      const response = await fetch('http://localhost:8000/logout', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json"
+            setUser(null);
+            setIsAuthenticated(false);
+            localStorage.removeItem("currentUser");
+        } catch (error) {
+            console.error("Logout failed:", error);
         }
-      });
+    };
 
-      if (!response.ok) {
-        throw new Error('Logout failed');
-      }
-    } catch (error) {
-      console.error("Logout failed:", error);
-    } finally {
-      setUser(null);
-      setIsAuthenticated(false);
-      localStorage.clear();
-    }
-  };
+    const checkAuth = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/whoami", {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
 
-  // Check auth status on mount
-  useEffect(() => {
-    checkAuth();
-  }, []);
+            if (!response.ok) throw new Error("Not authenticated");
 
-  return (
-    <AuthContext.Provider value={{ 
-      isAuthenticated, 
-      loading, 
-      user, 
-      login, 
-      logout,
-      checkAuth 
-    }}>
-      {children}
-    </AuthContext.Provider>
-  );
+            const data = await response.json();
+            if (data?.user) {
+                setUser(data.user);
+                setIsAuthenticated(true);
+                localStorage.setItem("currentUser", JSON.stringify(data.user));
+            } else {
+                setIsAuthenticated(false);
+                localStorage.removeItem("currentUser");
+            }
+        } catch (error) {
+            setIsAuthenticated(false);
+            localStorage.removeItem("currentUser");
+        }
+    };
+
+    return (
+        <AuthContext.Provider value={{ isAuthenticated, user, login, logout, checkAuth }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => useContext(AuthContext);

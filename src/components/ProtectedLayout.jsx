@@ -2,6 +2,7 @@ import { Routes, Route, Link, Navigate, useNavigate, Outlet } from 'react-router
 import { useAuth } from './Context/AuthContext'; // Import useAuth hook
 import { useState } from 'react';
 import logo from '../assets/logo.jpg'; // Add this import
+import axios from 'axios'
 
 export default function ProtectedLayout() {
   const { isAuthenticated, logout } = useAuth(); // Get isAuthenticated and logout function from context
@@ -10,16 +11,47 @@ export default function ProtectedLayout() {
 
   const handleLogout = async () => {
     try {
-      setIsLoggingOut(true);
-      await logout(); // Wait for logout to complete
-      navigate('/login', { replace: true }); // Navigate to login page
+        const response = await axios.get("http://localhost:8000/logout", {
+            withCredentials: true
+        });
+
+        console.log("Logout Response:", response);
+
+        if (response.data.logoutForm) {
+            // Inject and submit SAML logout form dynamically
+            const logoutFormContainer = document.createElement("div");
+            logoutFormContainer.innerHTML = response.data.logoutForm;
+            document.body.appendChild(logoutFormContainer);
+
+            const samlForm = document.getElementById("samlLogoutForm");
+            if (samlForm) {
+                samlForm.submit(); // Trigger SAML Logout
+                return; // Exit function to prevent clearing session prematurely
+            }
+        }
+
+        // If no SAML logout, clear session
+        await logout(); // Ensure session is cleared
+
+        // 🔄 **Force an immediate full page reload**
+        window.location.href = "/login";  
+        setTimeout(() => {
+            window.location.reload(true); // Force reload before alert appears
+        }, 50);
+
     } catch (error) {
-      console.error('Error during logout:', error);
-      alert('There was an error during logout. Please try again.');
-    } finally {
-      setIsLoggingOut(false);
+        console.error("Logout error:", error);
+        
+        // 🔄 **If an error occurs, still force reload before showing alert**
+        setTimeout(() => {
+            window.location.reload(true);
+        }, 50);
+
+        // alert("An error occurred during logout. Please try again."); 
     }
-  };
+};
+
+  
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) return <Navigate to="/login" replace />;
@@ -31,6 +63,7 @@ export default function ProtectedLayout() {
           <img src={logo} className="nav-logo" alt="Logo" />
         </div>
         <Link to="/dashboard" className="nav-link">Home</Link>
+        <Link to="/dashboard/application" className="nav-link">Applications</Link>
         <Link to="/dashboard/users" className="nav-link">Users</Link>
         <Link to="/dashboard/settings" className="nav-link">Settings</Link>
         <button 

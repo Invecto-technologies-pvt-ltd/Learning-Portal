@@ -115,82 +115,82 @@ export default function Settings() {
   };
 
   return (
-    <div className="content">
-      <div className="settings-container">
-        {/* Profile Settings Section */}
-        <h3>Profile Settings</h3>
-        <label>Name:</label>
-        <input
-          type="text"
-          value={user.fullname}
-        />
-        <label>Email:</label>
-        <input
-          type="email"
-          value={user.email}
-        />
-
-        {/* Change Password Section */}
-        <h3>Change Password</h3>
-        {error && <div className="error-message">{error}</div>}
-        <div className="password-section">
-          <label>Current Password:</label>
+      <div className="content">
+        <div className="settings-container">
+          {/* Profile Settings Section */}
+          <h3>Profile Settings</h3>
+          <label>Name:</label>
           <input
-            type="password"
-            value={passwordData.currentPassword}
-            onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-            placeholder="Enter current password"
+            type="text"
+            value={user.fullname}
           />
-          
-          <label>New Password:</label>
+          <label>Email:</label>
           <input
-            type="password"
-            value={passwordData.newPassword}
-            onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-            placeholder="Enter new password"
+            type="email"
+            value={user.email}
           />
-          
-          <label>Confirm New Password:</label>
-          <input
-            type="password"
-            value={passwordData.confirmPassword}
-            onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-            placeholder="Confirm new password"
-          />
-          
-          <button onClick={handleChangePassword}>Update Password</button>
-        </div>
 
-        {/* Admin Panel */}
-        {isAdmin && (
-          <div>
-            <h3>Admin Panel</h3>
-            <h4>Manage User Roles</h4>
-            {users.map((u) => (
-              <div key={u.id}>
-                <span>{u.name} ({u.role})</span>
-                <select
-                  value={u.role}
-                  onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-            ))}
-
-            <h4>Enable/Disable Features</h4>
-            {users.map((u) => (
-              <div key={u.id}>
-                <span>{u.name}</span>
-                <button onClick={() => toggleFeature(u.id)}>
-                  {u.featureEnabled ? "Disable" : "Enable"}
-                </button>
-              </div>
-            ))}
+          {/* Change Password Section */}
+          <h3>Change Password</h3>
+          {error && <div className="error-message">{error}</div>}
+          <div className="password-section">
+            <label>Current Password:</label>
+            <input
+              type="password"
+              value={passwordData.currentPassword}
+              onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+              placeholder="Enter current password"
+            />
+            
+            <label>New Password:</label>
+            <input
+              type="password"
+              value={passwordData.newPassword}
+              onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+              placeholder="Enter new password"
+            />
+            
+            <label>Confirm New Password:</label>
+            <input
+              type="password"
+              value={passwordData.confirmPassword}
+              onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+              placeholder="Confirm new password"
+            />
+            
+            <button onClick={handleChangePassword}>Update Password</button>
           </div>
-        )}
+
+          {/* Admin Panel */}
+          {isAdmin && (
+            <div>
+              <h3>Admin Panel</h3>
+              <h4>Manage User Roles</h4>
+              {users.map((u) => (
+                <div key={u.id}>
+                  <span>{u.name} ({u.role})</span>
+                  <select
+                    value={u.role}
+                    onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                  >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              ))}
+
+              <h4>Enable/Disable Features</h4>
+              {users.map((u) => (
+                <div key={u.id}>
+                  <span>{u.name}</span>
+                  <button onClick={() => toggleFeature(u.id)}>
+                    {u.featureEnabled ? "Disable" : "Enable"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
   );
 }

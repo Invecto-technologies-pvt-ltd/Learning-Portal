@@ -1,0 +1,93 @@
+/* Main content styling */
+.application-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Changed to center vertically */
+    min-height: 80vh;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(54, 77, 137, 0.7) 50%, rgba(54, 77, 137) 100%);
+}
+
+.application-content h2 {
+    margin-top: 40px;
+    color: black;
+}
+
+.application-content h1 {
+    margin-top: 1rem;
+    color: white;
+    /* margin-bottom: 8rem; */
+}
+
+/* Portal grid layout */
+.application-portal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(200px, 1fr)); /* Only 2 tiles layout */
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+/* Portal card styling */
+.application-portal-card {
+    background-color: slategray;
+    color: #070738;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 180px;
+    width: 170px; /* Fixed width for better centering */
+    overflow: hidden;
+    margin-bottom: 11rem;
+}
+
+.application-portal-card h2 {
+    color: aliceblue;
+}
+
+/* Hover effect on card */
+.application-portal-card:hover {
+    transform: scale(1.05);
+}
+
+/* Portal button styling */
+.application-portal-button {
+    margin-top: auto;
+    padding: 10px 15px;
+    border: none;
+    background-color: #2c3e50;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    width: auto;
+}
+
+.application-portal-button:hover {
+    background-color: #555;
+}
+
+.application-portal-button.active {
+    background-color: #dc3545;
+}
+
+.application-portal-button.active:hover {
+    background-color: #c82333;
+}
+
+/* Responsive grid layout for smaller screens */
+@media screen and (max-width: 900px) {
+    .application-portal-grid {
+        grid-template-columns: 1fr; /* Single column on small screens */
+    }
+}
+
+.application-portal-card.active {
+    border: 2px solid var(--card-color);
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
