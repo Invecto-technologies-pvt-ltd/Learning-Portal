@@ -1,23 +1,43 @@
-import { createContext, useState, useContext } from "react";
+//AuthContext
+
+import { createContext, useState, useEffect, useContext } from "react";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token") || !!localStorage.getItem("currentUser"));
     const [loading, setLoading] = useState(false);
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("currentUser")) || null);
 
-    const login = async () => {
+    useEffect(() => {
+        const handleAuthChange = () => {
+            setIsAuthenticated(!!localStorage.getItem("token") || !!localStorage.getItem("currentUser"));
+        };
+        window.addEventListener("storage", handleAuthChange);
+        return () => window.removeEventListener("storage", handleAuthChange);
+    }, []);
+
+    //SSO Login
+    const ssoLogin = async () => {
         setLoading(true);
         try {
-            window.location.href = "http://localhost:8000/login"; // Trigger SSO
+            window.location.href = "http://localhost:8000/login";
         } catch (error) {
-            console.error("Login failed:", error);
+            console.error("SSO Login failed:", error);
         } finally {
             setLoading(false);
         }
     };
 
+    //Local Login (called from Loginlocal.jsx)
+    const login = ({ accessToken, user }) => {
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        setUser(user);
+        setIsAuthenticated(true);
+    };
+
+    //Logout (SSO + Local)
     const logout = async () => {
         try {
             await fetch("http://localhost:8000/logout", {
@@ -27,16 +47,20 @@ export const AuthProvider = ({ children }) => {
                     "Content-Type": "application/json",
                 },
             });
-
+        } catch (e) {
+            console.warn("SSO logout failed, ignoring");
+        } finally {
+            localStorage.removeItem('token');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('learningTimes');
             setUser(null);
             setIsAuthenticated(false);
-            localStorage.removeItem("currentUser");
-        } catch (error) {
-            console.error("Logout failed:", error);
         }
     };
 
+    //Check SSO Login Only (skip when local login)
     const checkAuth = async () => {
+        if (localStorage.getItem('token')) return; // skip for local login
         try {
             const response = await fetch("http://localhost:8000/whoami", {
                 method: "GET",
@@ -64,7 +88,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout, checkAuth }}>
+        <AuthContext.Provider value={{ isAuthenticated, user, loading, ssoLogin, login, logout, checkAuth }}>
             {children}
         </AuthContext.Provider>
     );

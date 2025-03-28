@@ -5,7 +5,7 @@ import { useAuth } from "./Context/AuthContext";
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { isAuthenticated, login, checkAuth } = useAuth();
+  const { isAuthenticated, ssoLogin, checkAuth } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       setError("");
-      login(); // Redirects to Duo SSO login page
+      ssoLogin(); // Redirects to Duo SSO login page
     } catch (err) {
       setError("Authentication failed. Please try again.");
     }
