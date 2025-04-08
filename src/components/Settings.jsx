@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import './Settings.css';
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 export default function Settings() {
   const [user, setUser] = useState({

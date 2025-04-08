@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import "./Users.css";
 import { Navigate } from "react-router-dom";
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -30,8 +31,8 @@ export default function Users() {
       try {
         // Use different endpoints based on user role
         const endpoint = isAdmin 
-          ? "http://localhost:8000/api/v1/users/all-users"
-          : "http://localhost:8000/api/v1/users/current-user"; // Endpoint for current user's profile
+          ? `${ApiUrl}/users/all-users`
+          : `${ApiUrl}/users/current-user`; // Endpoint for current user's profile
 
         const response = await fetch(endpoint, {
           headers: {
@@ -87,7 +88,7 @@ export default function Users() {
 
   const downloadReport = async (user) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/reports/${user.id}`, {
+      const response = await fetch(`${ApiUrl}/reports/${user.id}`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
@@ -104,7 +105,7 @@ export default function Users() {
       
       if (!userData || !userData.report) {
         // Still create report but with zero durations
-        const oemResponse = await fetch("http://localhost:8000/api/v1/oem", {
+        const oemResponse = await fetch(`${ApiUrl}/oem`, {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }
@@ -169,7 +170,7 @@ export default function Users() {
 
   const handleRoleChange = async (userId, newRole) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/users/change-role/`, {
+      const response = await fetch(`${ApiUrl}/users/change-role/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

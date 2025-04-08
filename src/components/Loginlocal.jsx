@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "./Context/AuthContext"; // Import useAuth hook
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 export default function Login() {
   const [email, setemail] = useState("");
@@ -14,7 +15,7 @@ export default function Login() {
     setError("");
 
     try {
-      const response = await fetch("http://192.168.1.215:8000/api/v1/users/login", {
+      const response = await fetch(`${ApiUrl}/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

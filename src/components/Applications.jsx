@@ -1,12 +1,22 @@
 import { useState, useEffect } from "react";
-import "./Applications.css"; 
+import "./Applications.css";
 
 export default function Application() {
   const [portalWindow, setPortalWindow] = useState(null);
 
   const apps = [
-    { id: "App1", name: "SFDC", color: "#FFB347", link: "https://example.com/app1" },
-    { id: "App2", name: "Keka", color: "#77DD77", link: "https://example.com/app2" },
+    { 
+      id: "App1", 
+      name: "SFDC", 
+      color: "#FFB347", 
+      ssoUrl: "https://sso-88ce2422.sso.duosecurity.com/saml2/sp/DI1PUEQ02VRLKZ33BUDL/sso" // Direct SSO URL
+    },
+    { 
+      id: "App2", 
+      name: "Keka", 
+      color: "#77DD77", 
+      link: "https://example.com/app2" 
+    },
   ];
 
   useEffect(() => {
@@ -21,11 +31,18 @@ export default function Application() {
 
   const openPortal = (app) => {
     if (portalWindow) portalWindow.close();
-    const newWindow = window.open(app.link, "_blank");
-    if (newWindow) {
-      setPortalWindow(newWindow);
-    } else {
-      alert("Popup blocked! Please allow popups for this site.");
+
+    if (app.ssoUrl) {
+      // Redirect to Salesforce SSO URL directly
+      window.location.href = app.ssoUrl;
+    } else if (app.link) {
+      // Open other applications normally
+      const newWindow = window.open(app.link, "_blank");
+      if (newWindow) {
+        setPortalWindow(newWindow);
+      } else {
+        alert("Popup blocked! Please allow popups for this site.");
+      }
     }
   };
 

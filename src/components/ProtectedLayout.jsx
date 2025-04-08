@@ -17,14 +17,14 @@ export default function ProtectedLayout() {
 
             // Full page reload is still good after SSO
             window.location.href = "/login";
-            setTimeout(() => {
-                window.location.reload(true);
-            }, 50);
+            // setTimeout(() => {
+            //     window.location.reload(true);
+            // }, 50);
         } catch (error) {
             console.error("Logout error:", error);
-            setTimeout(() => {
-                window.location.reload(true);
-            }, 50);
+            // setTimeout(() => {
+            //     window.location.reload(true);
+            // }, 50);
         } finally {
             setIsLoggingOut(false);
         }

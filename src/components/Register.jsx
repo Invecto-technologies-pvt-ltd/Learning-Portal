@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../App.css";
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 export default function Register() {
   const [formData, setFormData] = useState({

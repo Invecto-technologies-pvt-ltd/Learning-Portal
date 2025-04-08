@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLearningTime } from "./Context/LearningTimeContext";
 import "./Dashboard.css";
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 export default function Dashboard() {
   const { learningTimes, activeSessions, startLearningSession, stopLearningSession } = useLearningTime();
@@ -23,7 +24,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchOems = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/v1/oem", {
+        const response = await fetch(`${ApiUrl}/oem`, {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }
@@ -96,7 +97,7 @@ export default function Dashboard() {
     try {
       // Send all learning data entries
       const promises = learningData.map(data => 
-        fetch("http://localhost:8000/api/v1/activity/log", {
+        fetch(`${ApiUrl}/activity/log`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -252,8 +253,8 @@ export default function Dashboard() {
             >
               <h2>{oem.name}</h2>
               <p>
-                Time Spent: {formatTime(accumulatedTime)}
               </p>
+                Time Spent: {formatTime(accumulatedTime)}
               <button 
                 onClick={() => openLearningPortal(oem)} 
                 className={`portal-button ${isActive ? 'active' : ''}`}
