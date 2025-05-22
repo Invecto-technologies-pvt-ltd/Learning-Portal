@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "./Context/AuthContext"; // Import useAuth hook
+const ApiUrl = import.meta.env.VITE_BASE_API_URL;
 
 export default function Login() {
   const [email, setemail] = useState("");
@@ -14,7 +15,7 @@ export default function Login() {
     setError("");
 
     try {
-      const response = await fetch("http://192.168.1.215:8000/api/v1/users/login", {
+      const response = await fetch(`${ApiUrl}/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -60,7 +61,6 @@ export default function Login() {
   return (
     <div className="login-container">
       <div className="login-box">
-<<<<<<< Updated upstream
         <h1>Portal</h1>
         <form onSubmit={handleLogin}>
           {error && <div className="error-message">{error}</div>}
@@ -80,15 +80,6 @@ export default function Login() {
           />
           <button type="submit">Login</button>
           <Link to="/register" className="auth-link">
-=======
-        <h1>LMS</h1>
-        <div className="saml-login-container">
-        {error && <div className="error-message">{error}</div>}
-        <button onClick={handleLogin} className="saml-login-button">
-          Login with SSO
-        </button>
-        <Link to="/register" className="auth-link">
->>>>>>> Stashed changes
             Don't have an account? Register
           </Link>
         </form>

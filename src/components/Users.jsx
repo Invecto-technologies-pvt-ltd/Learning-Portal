@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import "./Users.css";
 import { Navigate } from "react-router-dom";
+<<<<<<< Updated upstream
+=======
+const ApiUrl = import.meta.env.VITE_BASE_API_URL;
+>>>>>>> Stashed changes
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -87,15 +91,20 @@ export default function Users() {
 
   const downloadReport = async (user) => {
     try {
+<<<<<<< Updated upstream
       const response = await fetch(`http://192.168.1.215:8000/api/v1/reports/${user.id}`, {
+=======
+      const response = await fetch(`${ApiUrl}/activity/log/${user.id}`, {
+>>>>>>> Stashed changes
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
       });
-
+  
       if (!response.ok) {
         throw new Error(`Failed to fetch learning data: ${response.status}`);
       }
+<<<<<<< Updated upstream
 
       const responseData = await response.json();
       // console.log("Raw response data:", responseData);
@@ -120,52 +129,78 @@ export default function Users() {
           oemName: oem.name,
           totalDuration: 0
         }));
+=======
+  
+      const { data: userData } = await response.json();
+  
+      if (!userData || !userData.userActivities || userData.userActivities.length === 0) {
+        alert("No learning activities found for this user.");
+        return;
+>>>>>>> Stashed changes
       }
-
-      // Prepare Excel data using the report data
+  
+      // Group activities by date
+      const groupedByDate = {};
+      userData.userActivities.forEach(activity => {
+        const date = new Date(activity.startTime).toLocaleDateString();
+        if (!groupedByDate[date]) {
+          groupedByDate[date] = [];
+        }
+        groupedByDate[date].push(activity);
+      });
+  
+      const formatDuration = (seconds) => {
+        if (!seconds || isNaN(seconds)) return "0h 0m 0s";
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = seconds % 60;
+        return `${hours}h ${minutes}m ${remainingSeconds}s`;
+      };
+  
       const excelData = [
         [`User: ${userData.fullname}`, ""],
         [`Email: ${userData.email}`, ""],
-        [`Department: ${userData.department}`, ""],
-        ["", ""],
-        ["OEM", "Time Spent"],
-        ...userData.report.map(entry => [
-          entry.oemName,
-          formatTime(entry.totalDuration || 0)
-        ])
+        [`Department: ${userData.department || ''}`, ""],
+        [""]
       ];
-
-      // console.log("Final Excel data:", excelData);
-
+  
+      // Loop over grouped dates
+      Object.entries(groupedByDate).forEach(([date, activities]) => {
+        excelData.push([`Date: ${date}`, ""]);
+        excelData.push(["OEM", "Start Time", "End Time", "Duration"]);
+  
+        activities.forEach(entry => {
+          excelData.push([
+            entry.oem.name,
+            new Date(entry.startTime).toLocaleTimeString(),
+            new Date(entry.endTime).toLocaleTimeString(),
+            formatDuration(entry.duration || 0)
+          ]);
+        });
+  
+        excelData.push(["", ""]); // Spacer between days
+      });
+  
+      // Create Excel sheet
       const ws = XLSX.utils.aoa_to_sheet(excelData);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Learning Report");
-
-      // Apply column widths
-      ws["!cols"] = [{ wch: 25 }, { wch: 20 }];
-      // Merge cells for user info
-      ws["!merges"] = [
-        { s: { r: 0, c: 0 }, e: { r: 0, c: 1 } },
-        { s: { r: 1, c: 0 }, e: { r: 1, c: 1 } },
-        { s: { r: 2, c: 0 }, e: { r: 2, c: 1 } }
+  
+      // Column width
+      ws["!cols"] = [
+        { wch: 25 },
+        { wch: 20 },
+        { wch: 20 },
+        { wch: 15 }
       ];
-
-      // Style headers
-      ws["A1"].s = { font: { bold: true, sz: 14 } };
-      ws["A2"].s = { font: { bold: true, sz: 12 } };
-      ws["A3"].s = { font: { bold: true, sz: 12 } };
-
+  
       XLSX.writeFile(wb, `Learning_Report_${userData.fullname.replace(/\s+/g, '_')}.xlsx`);
-      // console.log("Report generated successfully");
     } catch (error) {
       console.error("Error generating report:", error);
-      console.error("Error details:", {
-        message: error.message,
-        stack: error.stack
-      });
       alert("Failed to generate report. Please try again.");
     }
-  };
+  };  
+
 
   const handleRoleChange = async (userId, newRole) => {
     try {

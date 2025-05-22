@@ -1,0 +1,48 @@
+name: Frontend CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Build frontend
+      run: |
+        cd LEARNING-PORTAL
+        npm run build
+
+    - name: Deploy to EC2 via SSH
+      uses: appleboy/scp-action@v1
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "frontend/dist/*"
+        target: "/home/ec2-user/frontend-build"
+
+    - name: Move files to Nginx root
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          sudo rm -rf /usr/share/nginx/html/*
+          sudo cp -r /home/ec2-user/frontend-build/* /usr/share/nginx/html/
+          sudo systemctl restart nginx
