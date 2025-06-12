@@ -2,10 +2,7 @@ import { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import "./Users.css";
 import { Navigate } from "react-router-dom";
-<<<<<<< Updated upstream
-=======
 const ApiUrl = import.meta.env.VITE_BASE_API_URL;
->>>>>>> Stashed changes
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -34,8 +31,8 @@ export default function Users() {
       try {
         // Use different endpoints based on user role
         const endpoint = isAdmin 
-          ? "http://192.168.1.215:8000/api/v1/users/all-users"
-          : "http://192.168.1.215:8000/api/v1/users/current-user"; // Endpoint for current user's profile
+          ? `${ApiUrl}/users/all-users`
+          : `${ApiUrl}/users/current-user`; // Endpoint for current user's profile
 
         const response = await fetch(endpoint, {
           headers: {
@@ -91,11 +88,7 @@ export default function Users() {
 
   const downloadReport = async (user) => {
     try {
-<<<<<<< Updated upstream
-      const response = await fetch(`http://192.168.1.215:8000/api/v1/reports/${user.id}`, {
-=======
       const response = await fetch(`${ApiUrl}/activity/log/${user.id}`, {
->>>>>>> Stashed changes
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
@@ -104,39 +97,12 @@ export default function Users() {
       if (!response.ok) {
         throw new Error(`Failed to fetch learning data: ${response.status}`);
       }
-<<<<<<< Updated upstream
-
-      const responseData = await response.json();
-      // console.log("Raw response data:", responseData);
-
-      const { data: userData } = responseData;
-      
-      if (!userData || !userData.report) {
-        // Still create report but with zero durations
-        const oemResponse = await fetch("http://192.168.1.215:8000/api/v1/oem", {
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-          }
-        });
-        
-        if (!oemResponse.ok) {
-          throw new Error("Failed to fetch OEMs");
-        }
-        
-        const { data: oemData } = await oemResponse.json();
-        userData.report = oemData.map(oem => ({
-          oemId: oem.id,
-          oemName: oem.name,
-          totalDuration: 0
-        }));
-=======
   
       const { data: userData } = await response.json();
   
       if (!userData || !userData.userActivities || userData.userActivities.length === 0) {
         alert("No learning activities found for this user.");
         return;
->>>>>>> Stashed changes
       }
   
       // Group activities by date
@@ -204,7 +170,7 @@ export default function Users() {
 
   const handleRoleChange = async (userId, newRole) => {
     try {
-      const response = await fetch(`http://192.168.1.215:8000/api/v1/users/change-role/`, {
+      const response = await fetch(`${ApiUrl}/users/change-role/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
